@@ -1,1 +1,1 @@
-// this is a data model module it has no terraform resources to create
+// entrypoint data model is generated as outputs

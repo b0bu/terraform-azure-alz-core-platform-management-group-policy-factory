@@ -1,4 +1,9 @@
+variable "scope" {
+  type        = string
+  description = "scope at which to apply policy"
+}
+
 variable "archetype" {
   type        = string
-  description = "determines a unique list of policies based on use case"
+  description = "which policies to apply at scope"
 }
