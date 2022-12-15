@@ -18,11 +18,18 @@ locals {
     location = "uksouth"
   }
 
-  // emtpy entries will assign initiatives with a managed identity
-  // a role assign will be applied for each entry in the list of roles to a policy managed identity
+  /*
+  using this structure means that policy initiatives or definitions 
+  which has a file on disk, exist in entirely in memory or are builtin to azure policy
+  can be assigned with a managed identity - with or without any role assignment
+
+  emtpy entries will assign policy with a managed identity this is required when a policy
+  has a default value of DeployIfNotExists and some will need it
+
+  otherwise at role assignment the managed identity will be assigned a role for each role in the list
+  */
   managed_identity_role_assignments = {
     Deploy-MDFC-Config = ["Security Admin", "Contributor"]
-    # assign with managed identity but no role assignments included
     NIST-SP-800-53-rev-5   = []
     Enforce-EncryptTransit = []
   }
@@ -55,4 +62,8 @@ output "managed_identity_role_assignments" {
 
 output "parameters" {
   value = local.template_parameters_for_policy_assignement
+}
+
+output "list_of_policy_initiative_file_names" {
+  value = local.list_of_policy_initiative_files
 }
