@@ -1,10 +1,8 @@
 // dynamically generated custom policy by file => definition metadata
 locals {
-  scope                           = var.scope
-  archetype                       = var.archetype
-  location                        = "uksouth"
+  archetype = var.archetype
 
-  templates_path = "${path.module}/policies/parameters"
+  templates_path                 = "${path.module}/policies/parameters"
   list_of_policy_parameter_files = tolist(fileset(local.templates_path, "**.json"))
 
   // file path to search based on archetype
@@ -16,17 +14,17 @@ locals {
   // ignored if no templating is required; uses ${} syntax within .json tmpl
   // build out for when var interoplation is required in params or policy
   common_template_values = {
-    scope    = local.scope
-    location = local.location
+    scope    = var.scope
+    location = "uksouth"
   }
 
-  // categorise policy assignment by if managed identity is required or not
-  // an entry here means an initiative will be assigned with a managed identity
-  azurerm_role_assignments = {
-    Deploy-MDFC-Config     = ["Security Admin", "Contributor"]
-    NIST-SP-800-53-rev-5   = [] # assign with managed identity but no role assignments included
+  // emtpy entries will assign initiatives with a managed identity
+  // a role assign will be applied for each entry in the list of roles to a policy managed identity
+  managed_identity_role_assignments = {
+    Deploy-MDFC-Config = ["Security Admin", "Contributor"]
+    # assign with managed identity but no role assignments included
+    NIST-SP-800-53-rev-5   = []
     Enforce-EncryptTransit = []
-    //Deploy-ASC-SecContacts = [] this should not be being assigned it's assigned inside of MDFC
   }
 
   // json to HCL or null
@@ -43,7 +41,6 @@ locals {
 
 }
 
-
 output "initiatives" {
   value = local.templated_map_of_policy_initiative_files
 }
@@ -52,8 +49,8 @@ output "definitions" {
   value = local.templated_map_of_policy_definition_files
 }
 
-output "azurerm_role_assignments" {
-  value = local.azurerm_role_assignments
+output "managed_identity_role_assignments" {
+  value = local.managed_identity_role_assignments
 }
 
 output "parameters" {
