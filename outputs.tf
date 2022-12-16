@@ -8,7 +8,20 @@ locals {
   // file path to search based on archetype
   initiatives_path                = "${path.module}/policies/${local.archetype}/initiatives"
   definitions_path                = "${path.module}/policies/${local.archetype}/definitions"
-  list_of_policy_initiative_files = tolist(fileset(local.initiatives_path, "**.json"))
+
+  /*
+  The order of this list is maintained in the state, this is done so that an accurate mapping of
+  policy name, whether it needs a managed identity, to which roles that managed id required.
+  The only thing to note here is that newly added files should be pushed onto the end of the list,
+  not in the middle and not at the top. This is a low friction caveat to being able to massively
+  and quickly scale policy.
+  */
+  list_of_policy_initiative_files = [
+    "deploy_mdfc_config.json",
+    "enforce_encrypt_in_transit.json",
+    "deploy-resource-diag.json",
+    ]
+
   list_of_policy_definition_files = tolist(fileset(local.definitions_path, "**.json"))
 
   // ignored if no templating is required; uses ${} syntax within .json tmpl
@@ -19,9 +32,11 @@ locals {
   }
 
   /*
-  using this structure means that policy initiatives or definitions 
-  which has a file on disk, exist in entirely in memory or are builtin to azure policy
-  can be assigned with a managed identity - with or without any role assignment
+  using this structure controls the managed identity of a policy initiatives or definitions 
+  which has a file on disk, exist in entirely in memory or are builtins
+  provided by azure policy.
+
+  no entry means a managed identity will not be created
 
   emtpy entries will assign policy with a managed identity this is required when a policy
   has a default value of DeployIfNotExists and some will need it
@@ -32,6 +47,7 @@ locals {
     Deploy-MDFC-Config = ["Security Admin", "Contributor"]
     NIST-SP-800-53-rev-5   = []
     Enforce-EncryptTransit = []
+    DiagnosticsLAW = ["Monitor Contributor", "Log Analytics Contributor"]
   }
 
   // json to HCL or null
