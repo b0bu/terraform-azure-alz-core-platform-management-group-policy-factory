@@ -6,8 +6,8 @@ locals {
   list_of_policy_parameter_files = tolist(fileset(local.templates_path, "**.json"))
 
   // file path to search based on archetype
-  initiatives_path                = "${path.module}/policies/${local.archetype}/initiatives"
-  definitions_path                = "${path.module}/policies/${local.archetype}/definitions"
+  initiatives_path = "${path.module}/policies/${local.archetype}/initiatives"
+  definitions_path = "${path.module}/policies/${local.archetype}/definitions"
 
   /*
   The order of this list is maintained in the state, this is done so that an accurate mapping of
@@ -20,7 +20,7 @@ locals {
     "deploy_mdfc_config.json",
     "enforce_encrypt_in_transit.json",
     "deploy-resource-diag.json",
-    ]
+  ]
 
   list_of_policy_definition_files = tolist(fileset(local.definitions_path, "**.json"))
 
@@ -44,10 +44,10 @@ locals {
   otherwise at role assignment the managed identity will be assigned a role for each role in the list
   */
   managed_identity_role_assignments = {
-    Deploy-MDFC-Config = ["Security Admin", "Contributor"]
+    Deploy-MDFC-Config     = ["Security Admin", "Contributor"]
     NIST-SP-800-53-rev-5   = []
     Enforce-EncryptTransit = []
-    DiagnosticsLAW = ["Monitor Contributor", "Log Analytics Contributor"]
+    Deploy-Resource-Diag   = ["Monitor Contributor", "Log Analytics Contributor"]
   }
 
   // json to HCL or null

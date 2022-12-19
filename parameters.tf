@@ -48,6 +48,13 @@ locals {
         }
       }
     }
+    Deploy-Resource-Diag = {
+      params = {
+        logAnalytics = {
+          value = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resource-group-name/providers/Microsoft.OperationalInsights/worksapces/law-name"
+        }
+      }
+    }
     Deploy-ASC-SecContacts = {
       params = {
         emailSecurityContact = {
@@ -57,3 +64,4 @@ locals {
     }
   }
 }
+
